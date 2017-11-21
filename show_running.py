@@ -9,7 +9,7 @@ requests.packages.urllib3.disable_warnings()
 host = raw_input('FQDN or ip address ')
 ts = 'https://%s/api/tokenservices' % host
 test = 'https://%s/api/monitoring/clock' % host
-mainurl= 'https://%s/api/cli' %host
+mainurl= 'https://%s/api/cli' % host
 path = '%s/.config' % os.path.expanduser('~')
 token = ''
 def login():
