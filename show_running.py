@@ -6,9 +6,9 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings()
-ts = 'https://10.10.0.3/api/tokenservices'
-test = 'https://10.10.0.3/api/monitoring/clock'
-mainurl= 'https://10.10.0.3/api/cli'
+ts = 'https://fw1.local/api/tokenservices'
+test = 'https://fw1.local/api/monitoring/clock'
+mainurl= 'https://fw1.local/api/cli'
 path = '%s/.config' % os.path.expanduser('~')
 token = ''
 def login():
