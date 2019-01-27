@@ -1,0 +1,13 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Show Running Configuration
+      show_running:
+        host={{ inventory_hostname }}
+        username=rinmeister
+        password=opgero8t
+        validate_certs=no
+
