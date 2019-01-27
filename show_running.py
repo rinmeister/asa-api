@@ -6,9 +6,9 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings()
-ts = 'https://fw1.local/api/tokenservices'
-test = 'https://fw1.local/api/monitoring/clock'
-mainurl= 'https://fw1.local/api/cli'
+ts = 'https://firewall.grijsbach.eu/api/tokenservices'
+test = 'https://firewall.grijsbach.eu/api/monitoring/clock'
+mainurl= 'https://firewall.grijsbach.eu/api/cli'
 path = '%s/.config' % os.path.expanduser('~')
 token = ''
 def login():
