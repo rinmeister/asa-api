@@ -5,9 +5,9 @@
 
   tasks:
     - name: Show Running Configuration
-      show_running:
+      asa-test:
         host={{ inventory_hostname }}
         username=rinmeister
-        password=opgero8t
+        password=xxx
         validate_certs=no
 
