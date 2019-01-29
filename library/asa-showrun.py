@@ -1,20 +1,38 @@
+#!/usr/bin/python
+
+DOCUMENTATION = '''
+---
+
+module: asa-test
+
+'''
+
+from ansible.module_utils.basic import *
 import json
 import requests
 import os
-import getpass
 import urllib3
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-requests.packages.urllib3.disable_warnings()
-ts = 'https://firewall.grijsbach.eu/api/tokenservices'
-test = 'https://firewall.grijsbach.eu/api/monitoring/clock'
-mainurl= 'https://firewall.grijsbach.eu/api/cli'
-path = '%s/.config' % os.path.expanduser('~')
+
+fields = {
+    "host": {"required": True, "type": "str"},
+    "username": {"required": True, "type": "str" },
+    "password": {"required": False, "type": "str"},
+    "validate_certs": {"default": False, "type": "bool" },
+    }
+
+module = AnsibleModule(argument_spec=fields)
+m_args = module.params
+path = '{}/.config'.format(os.path.expanduser('~'))
+ts = 'https://{}/api/tokenservices'.format(m_args['host'])
+test = 'https://{}/api/monitoring/clock'.format(m_args['host'])
+mainurl= 'https://{}/api/cli'.format(m_args['host'])
 token = ''
+
 def login():
     while True:
-        username = raw_input('Username: ')
-        password = getpass.getpass(prompt='Password: ')
+        username = m_args['username']
+        password = m_args['password']
         try:
             r = requests.post(ts, auth=(username, password), verify=False)
             token = r.headers['X-Auth-Token']
@@ -24,7 +42,8 @@ def login():
             os.chmod('%s/tokenfile' %path, 0o600)
             break
         except KeyError:
-            print ("Wrong UID or password, please try again.")
+             module.fail_json(msg='There is a keyerror')
+#    module.exit_json(changed=False, meta=module.params, msg='done')
 
 def aanmeldpoging():
     while True:
@@ -34,29 +53,27 @@ def aanmeldpoging():
                         r = requests.get(test, headers={'X-Auth-Token': '%s' % jar.readline()}, verify=False)
                         if r.status_code == 401:
                             login()
-#                        print(r.url)
-#                        print r.text
-#                        print r.status_code
                         break
             except ValueError:
-                print ("someone tinkered with the token, it is invalid, you will have to login again.")
+                module.failed_json(msg='someone tinkered with the token, it is invalid, you will have to login again.')
                 login()
             jar.close()
         else:
             login()
 
+
 def main():
+
+# Probeer aan te melden met een token
+    aanmeldpoging()
     with open('%s/tokenfile' %path, 'r') as jar:
         r = requests.post(mainurl, headers={'X-Auth-Token': '%s' % jar.readline()}, json={"commands": ["show running-config"]}, verify=False)
         jar.close()
     r_json = r.json()
-#   r_json = r.text
     with open('showrun','w') as showrun:
         json.dump(r_json, showrun)
-#       showrun.write(r_json)
-#       showrun.close()
-    #print r.text
-    #print r.json()
+    module.exit_json(changed=False, meta=module.params, msg='done')
 
-aanmeldpoging()
-main()
+if __name__ == '__main__':
+    main()
+
