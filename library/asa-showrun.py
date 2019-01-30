@@ -72,7 +72,7 @@ def main():
         r = requests.post(mainurl, headers={'X-Auth-Token': '%s' % jar.readline()}, json={"commands": ["show running-config"]}, verify=False)
         jar.close()
     r_json = r.json()
-    with open('~/showrun','w') as showrun:
+    with open('{}/showrun'.format(path),'w') as showrun:
         json.dump(r_json, showrun)
     module.exit_json(changed=True, meta=module.params, msg='show running has been saved into your home directory')
 
