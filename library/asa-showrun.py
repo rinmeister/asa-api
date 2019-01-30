@@ -13,7 +13,7 @@ import requests
 import os
 import urllib3
 
-
+#Specify in variable fields all variables in playbook YAML
 fields = {
     "host": {"required": True, "type": "str"},
     "username": {"required": True, "type": "str" },
@@ -21,7 +21,9 @@ fields = {
     "validate_certs": {"default": False, "type": "bool" },
     }
 
+#module is the class containing the attributes defined in 'fields'
 module = AnsibleModule(argument_spec=fields)
+#m_args contains the dictionary of the variables
 m_args = module.params
 path = '{}/.config'.format(os.path.expanduser('~'))
 ts = 'https://{}/api/tokenservices'.format(m_args['host'])
@@ -70,9 +72,9 @@ def main():
         r = requests.post(mainurl, headers={'X-Auth-Token': '%s' % jar.readline()}, json={"commands": ["show running-config"]}, verify=False)
         jar.close()
     r_json = r.json()
-    with open('showrun','w') as showrun:
+    with open('~/showrun','w') as showrun:
         json.dump(r_json, showrun)
-    module.exit_json(changed=False, meta=module.params, msg='done')
+    module.exit_json(changed=True, meta=module.params, msg='show running has been saved into your home directory')
 
 if __name__ == '__main__':
     main()
