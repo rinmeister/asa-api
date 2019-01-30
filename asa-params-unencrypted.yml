@@ -1,0 +1,15 @@
+---
+
+#module expects 'firewalls' to be present in the /etc/ansible/hosts file
+- hosts: firewalls
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Show Running Configuration
+      asa-showrun:
+        host={{ inventory_hostname }}
+        username=foo
+        password=bar
+        validate_certs=no
+
