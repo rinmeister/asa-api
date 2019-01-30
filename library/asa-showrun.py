@@ -25,7 +25,8 @@ fields = {
 module = AnsibleModule(argument_spec=fields)
 #m_args contains the dictionary of the variables
 m_args = module.params
-path = '{}/.config'.format(os.path.expanduser('~'))
+#path = '{}/.config'.format(os.path.expanduser('~'))
+path = os.path.expanduser('~')
 ts = 'https://{}/api/tokenservices'.format(m_args['host'])
 test = 'https://{}/api/monitoring/clock'.format(m_args['host'])
 mainurl= 'https://{}/api/cli'.format(m_args['host'])
