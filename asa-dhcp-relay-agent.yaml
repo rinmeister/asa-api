@@ -1,0 +1,46 @@
+---
+
+#module expects 'firewalls' to be present in the /etc/ansible/hosts file
+- hosts: firewalls
+  connection: local
+  gather_facts: no
+  vars:
+          interface:
+                  - dmz-guest
+                  - inside
+          relay_enabled: False
+          dhcpserver_enabled: True
+          username: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            63613965623338363566313465633236343038343062303934663536306331383334326662343366
+            3165343962613362666235383938663561383664663330660a383166363131396131613630663763
+            35663638313239626564316536356232303535386562613864616666633038666633393962306537
+            3764346439636639390a663865343833356164656466643265343835383934616262393936356437
+            3639
+
+          password: !vault |
+            $ANSIBLE_VAULT;1.1;AES256
+            37653561333334386665303866616238333030376638373239353065363239666265323861633565
+            3564373537663334653038653737653434393536383837310a383139343962386365626562306338
+            38323264346331623738656365313934633236666631633666643734313061323435626236306635
+            3435613033613538380a623636623937653661356362633464366164616262353136626366323238
+            6666
+
+  tasks:
+    - name: Configure relay agent
+      asa-dhcp-relay-agent:
+        host: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: No
+        interface: "{{ item }}"
+        enabled: "{{ relay_enabled }}"
+      loop: "{{ interface }}"
+    - name: Configure dhcp server
+      asa-dhcp-server:
+        host: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: No
+        interface: "{{ interface[1] }}"
+        enabled: "{{ dhcpserver_enabled }}"
